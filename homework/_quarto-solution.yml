@@ -1,0 +1,7 @@
+project:
+  output-dir: solution
+
+format:
+  html:
+    self_contained: true
+    theme: zephyr

@@ -1,0 +1,146 @@
+---
+title: Session 1 Homework
+format:
+  html:
+    self-contained: true
+    theme: litera_edited.scss
+    highlight-style: textmate.theme
+filters:
+  - assign
+---
+
+Try these homework questions to revise the content of session 1.
+
+1.  What would be the result of evaluating the following in R?
+    a.  `2 + 3 * 4`
+    b.  `(2 + 3) * 4`
+    c.  `2 == 3`
+    d.  `x <- 32`
+    e.  `read_csv("data.csv")`
+    f.  `mean(iris$Sepal.Length)`
+    g.  `tail(iris)`
+    h.  `!FALSE`
+    i.  `sum(c(1, 2, 5, 9))`
+    j.  `class(TRUE)`
+    k.  `mean(c("cat", "dog", "fish"))`
+
+::: direction
+
+<details><summary>Hint</summary>
+You can try these in RStudio to check your answers!
+</details>
+
+:::
+
+::: sol
+1.  .
+    a.  14 (because of order of operations, R does 3 times 4 first then adds 2)
+    b.  20 (this time, R does the addition first as it's in brackets)
+    c.  `FALSE`
+    d.  x is assigned the value 32 (no output in the console though it will appear in the environment panel)
+    e.  Read a csv file called `data.csv` (assuming it exists)
+    f.  Calculate the mean of the `Sepal.Length` column in the `iris` dataset
+    g.  Return the last 6 rows of the `iris` dataset
+    h.  `TRUE` (remember that `!` is the negation operator and the negation/opposite of `FALSE` is `TRUE`)
+    i.  17
+    j.  `"logical"`
+    k.  An error because the `mean()` function cannot be applied to character data
+:::
+
+2.  I've written the following code in R. What would be the output? What are the values of `x`, `y`, and `z` after running all of this code?
+
+```{r}
+#| eval: false
+x <- 1:5
+y <- x * 2
+z <- x + y
+z
+```
+
+::: sol
+The output of the code would be: `[1]  3  6  9 12 15` Note that the first three lines of code are assigning values to `x`, `y`, and `z`, so there will be no output in the console for those.
+
+The values of `x`, `y`, and `z` after running the code would be:
+
+-   `x` is a vector of numbers from 1 to 5: `1 2 3 4 5`
+-   `y` is the result of multiplying each element of `x` by 2: `2 4 6 8 10`
+-   `z` is the result of adding each element of `x` to the corresponding element of `y`: `3 6 9 12 15`
+:::
+
+3.  I'm trying to run the following code in R, but I got an error. Why? There might be more than one error.
+
+```{r}
+#| eval: false
+2020_data <- read_csv("2020_data.csv")
+```
+
+::: sol
+The main error here is that `2020_data` is not a valid variable name in R (variable names cannot start with a number). You can fix this by changing the variable name to something like `data_2020`. Another issue is that the `read_csv()` function part of the `readr` package in the `tidyverse`, so you would need to load one of those packages first using `library(readr)` or `library(tidyverse)` before running the code.
+:::
+
+4.  Load the `mtcars` data into your R environment using the `data()` function.
+    a.  What are the first 10 rows of the `mtcars` dataset?
+    b.  What is the mean of the `mpg` column in the `mtcars` dataset?
+
+::: direction
+
+<details><summary>Hint</summary>
+For (a), `head()` gives the first six rows of a dataset by default. Check the documentation for the `head()` function to see how to get the first 10 rows.
+For (b), you can use the `mean()` function to calculate the mean of a column in a dataset.
+</details>
+
+:::
+
+::: sol
+a\. The first 10 rows of the `mtcars` dataset can be obtained using the `head()` function with the argument `n = 10`. The code would be:
+
+```{r}
+head(mtcars, n = 10)
+```
+
+b\. The mean of the `mpg` column in the `mtcars` dataset can be calculated using the `mean()` function. The code would be:
+
+```{r}
+mean(mtcars$mpg)
+```
+:::
+
+5.  Challenge: using the `iris` dataset, I want to convert the `Sepal.Length` column to centimeters (it's currently in inches) and add the result as a new column to `iris`. There are 2.54 centimeters in an inch. How would you do this in R?
+
+::: direction
+
+<details><summary>Hint</summary>
+You can create a new column in the `iris` dataset by assigning a vector to a new column name. For example, `iris$new_column <- ...`
+</details>
+
+:::
+
+::: sol
+To convert the `Sepal.Length` column in the `iris` dataset to centimeters, you can multiply the column (accessed with `$`) by 2.54. This can then be assigned to a new column in the `iris` dataframe. Here's how you can do it in R:
+
+```{r}
+iris$sepal_length_cm <- iris$Sepal.Length * 2.54
+```
+
+:::
+
+::: direction
+
+If you have any questions, post them on the teams group. If you'd like more practice, try out the [practice questions in the course ebook](https://kzeglinski.github.io/new_wehi_r_course/session_1.html#practice-questions).
+
+## Just for fun: customising your RStudio!
+
+RStudio is highly customisable, and you can change the appearance of the interface to suit your preferences. Try changing the theme, font size, or layout of RStudio to make it more comfortable for you to work in. You can find these options in the RStudio settings (Tools \> Global Options):
+
+![](images/custom_r_01.png){width="1200"}
+
+For example, you can change the theme in the 'Appearance' section:
+
+![](images/custom_r_02.png){width="1200"}
+
+Here's the 'dracula' theme:
+
+![](images/custom_r_03.png){width="1200"}
+
+Find a theme that you like and make RStudio your own!
+:::
