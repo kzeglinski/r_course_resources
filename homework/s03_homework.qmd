@@ -1,0 +1,273 @@
+---
+title: Session 3 Homework
+format:
+  html:
+    self-contained: true
+    theme: litera_edited.scss
+    highlight-style: textmate.theme
+filters:
+  - assign
+---
+
+```{r}
+#| include: false
+# Load the necessary libraries
+library(tidyverse)
+library(patchwork)
+```
+
+Try these homework questions to revise the content of session 3.
+
+For this homework, you will be using the mtcars dataset, which is built into R. You can load it with `data(mtcars)`. Try using some of the functions we've learned about in sessions 1 and 2 to explore the dataset (like `View()` to open it in a tabular form, or `head()` to show the first six rows). You can also use the `?mtcars` command to read the help page for the dataset.
+
+1. Look at the following ggplot2 code and describe in words what type of plot it will make.
+
+::: direction
+
+<details><summary>Hint</summary>
+If there are some functions or arguments you don't know, try looking up the help pages for them. You can do this by typing `?function_name` in the console, or searching for information online. It's totally normal to not remember every little ggplot2 function or argument as there are so many!
+</details>
+
+:::
+
+  a.
+```{r}
+#| eval: false
+ggplot(data = mtcars,
+  aes(x = mpg)) +
+  geom_histogram(binwidth = 2, fill = "orange", colour = "red") +
+  facet_wrap(~ cyl) +
+  labs(title = "Histogram of miles per gallon (mpg) by number of cylinders",
+       x = "Miles per gallon (mpg)",
+       y = "Count") +
+  theme_bw()
+```
+
+  b.
+```{r}
+#| eval: false
+ggplot(data = mtcars,
+  aes(x = mpg, y = wt)) +
+  geom_point(aes(size = hp), colour = "blue", alpha = 0.5) +
+  geom_smooth(method = "lm", colour = "black") +
+  labs(title = "The relationship between miles per gallon (mpg), weight (wt) and horsepower (hp)",
+       x = "Miles per gallon (mpg)",
+       y = "Weight (wt)",
+       size = "Horsepower (hp)") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 14, face = "bold", colour = "blue"))
+```
+
+::: sol
+  a. This code creates a histogram of the `mpg` (miles per gallon) variable from the `mtcars` dataset. The histogram is faceted by the number of cylinders (`cyl`), meaning that separate histograms will be created for each unique value of `cyl`. The bars of the histogram are filled with orange and outlined in red. The x-axis is labelled "Miles per gallon (mpg)" and the y-axis is labelled "Count". The overall theme of the plot is set to a black-and-white theme using `theme_bw()`.
+  b. This code creates a scatterplot/bubble plot of the `mpg` (miles per gallon) variable against the `wt` (weight) variable from the `mtcars` dataset. The points are coloured blue and have an alpha (transparency) of 0.5, and their size is determined by the `hp` (horsepower) variable. A linear regression line is added to the plot using `geom_smooth(method = "lm")`, which is coloured black. The x-axis is labelled "Miles per gallon (mpg)" and the y-axis is labelled "Weight (wt)". The plot title is "The relationship between miles per gallon (mpg), weight (wt) and horsepower (hp)", with a font size of 14, bold face, and blue colour. Note the use of the `size` argument in the `labs()` function to label the legend for the size of the points as "Horsepower (hp)".
+:::
+
+2. Write some ggplot2 code that will create:
+  a. A bar chart of the number of cars in each `cyl` category. Make sure to label the plot.
+  b. A boxplot of `mpg` by `cyl`, with the boxplot fill colour set to "lightblue" and the outline colour set to "darkblue". The plot should have a title "Boxplot of miles per gallon (mpg) by number of cylinders", and the x-axis labelled "Number of cylinders" and the y-axis labelled "Miles per gallon (mpg)".
+
+Try to make them look as nice as possible, using the techniques we've learned in this session.
+
+::: direction
+<details><summary>Hint</summary>
+
+For (a), if you're having trouble getting the bar chart to show up, remember that `geom_bar()` expects a categorical variable (i.e. not a numberic variable) on the x-axis. What is the class of the `cyl` variable? You can check this with `mtcars %>% pull(cyl) %>% class()`. Remember from session 1 that you can use the `as.character()` function to convert a numeric variable to a character variable.
+
+</details>
+
+:::
+
+::: sol
+  a. To create a bar chart of the number of cars in each `cyl` category, you can use the following code:
+
+```{r}
+ggplot(data = mtcars,
+  # use as.character() to convert cyl to a character variable (can't make bar chart of numeric variable)
+  aes(x = as.character(cyl))) +
+  # use geom_bar() to create a bar chart
+  # choose some nice colours
+  geom_bar(fill = "lightblue", colour = "darkblue") +
+  # label it
+  labs(title = "Number of cars by number of cylinders",
+       x = "Number of cylinders",
+       y = "Count") +
+  # do some styling
+  theme_minimal(base_size = 12)
+```
+
+
+  b. To create the boxplot described in the question, you can use the following code:
+```{r}
+ggplot(data = mtcars,
+  aes(x = as.character(cyl), y = mpg)) +
+  # use geom_boxplot() to create a boxplot
+  # choose some nice colours
+  geom_boxplot(fill = "lightblue", colour = "darkblue") +
+  # label it
+  labs(title = "Boxplot of miles per gallon (mpg) by number of cylinders",
+       x = "Number of cylinders",
+       y = "Miles per gallon (mpg)") +
+  # do some styling
+  theme_minimal(base_size = 12)
+```
+
+:::
+
+3. I've written the following code to try and make a dotplot that shows the relationship between the horsepower of a car and whether it has manual or automatic transmission in the `mtcars` dataset, but it doesn't work. Can you figure out what the problem is?
+As a bonus question, why is the `as.logical()` function being used here?
+
+```{r}
+#| eval: false
+ggplot(data = mtcars,
+  aes(x = as.logical(am), y = hp)) +
+  geom_point(aes(colour = "magenta", position = position_jitter(0.1), size = 2)) +
+  labs(title = "Relationship between horsepower and transmission type",
+       x = "Is the car manual?",
+       y = "Horsepower") +
+  theme_bw()
+```
+
+::: direction
+<details><summary>Hint</summary>
+Read the error message carefully! It will give you a clue about what the problem is.
+</details>
+
+:::
+
+::: sol
+The problem with the code is that the `aes()` function is not being used correctly to map the aesthetics of the plot. The `position` argument should be passed to the `geom_point()` function instead (it never belongs inside `aes()`) and the colour and size aesthetics shouldn't be inside `aes()` either as they are just for styling the plot and not related to any variables.
+
+The correct code (and resulting plot) should look like this:
+
+```{r}
+ggplot(data = mtcars,
+  aes(x = as.logical(am), y = hp)) +
+  geom_point(colour = "magenta", position = position_jitter(0.1), size = 2) +
+  labs(title = "Relationship between horsepower and transmission type",
+       x = "Is the car manual?",
+       y = "Horsepower") +
+  theme_bw()
+```
+
+The reason we use `as.logical()` is because the `am` variable in the `mtcars` dataset is actually a numeric variable (0 for automatic and 1 for manual), but we want to treat it as a logical variable (automatic vs. manual) because TRUE/FALSE here is more easily interpretable. The `as.logical()` function converts the numeric values to logical values (TRUE or FALSE), which can be used to create a dotplot.
+:::
+
+4. Write some code to re-create the plots below in ggplot2.
+  a.
+
+```{r}
+#| echo: false
+ggplot(data = mtcars,
+  aes(x = mpg, y = wt)) +
+  geom_point(aes(size = hp), colour = "blue", alpha = 0.5) +
+  labs(title = "The relationship between miles per gallon (mpg), weight (wt) and horsepower (hp) \nfor different numbers of cylinders",
+       x = "Miles per gallon (mpg)",
+       y = "Weight (wt)",
+       size = "Horsepower (hp)") +
+  facet_wrap(~ cyl) +
+  theme(legend.position = "bottom")
+```
+
+::: direction
+<details><summary>Hint</summary>
+If your title is too long and going off the page, add "\n" to introduce a line break (the n stands for new line). For example: `"This is a long title \n that goes on two lines"`.
+</details>
+
+:::
+
+  b.
+
+```{r}
+#| echo: false
+# make it a histogram  of horsepower (hp) coloured by number of cylinders (cyl)
+ggplot(data = mtcars,
+  aes(x = hp, fill = as.character(cyl))) +
+  geom_histogram(binwidth = 20, colour = "black") +
+  labs(title = "Histogram of horsepower (hp) by number of cylinders",
+       x = "Horsepower (hp)",
+       y = "Count",
+       fill = "Number of cylinders")
+```
+
+There are 20 bins in the histogram, to save you having to count them.
+
+::: direction
+<details><summary>Hint</summary>
+Remember from earlier that we can use `as.character()` to conver the `cyl` variable to a character variable that can be treated as categorical.
+</details>
+
+:::
+
+::: sol
+  a. The code to create the first plot is:
+
+```{r}
+ggplot(data = mtcars,
+  aes(x = mpg, y = wt)) +
+  geom_point(aes(size = hp), colour = "blue", alpha = 0.5) +
+  labs(title = "The relationship between miles per gallon (mpg), weight (wt) and horsepower (hp) \nfor different numbers of cylinders",
+       x = "Miles per gallon (mpg)",
+       y = "Weight (wt)",
+       size = "Horsepower (hp)") +
+  facet_wrap(~ cyl) +
+  theme(legend.position = "bottom")
+```
+
+  b. The code to create the second plot is:
+```{r}
+#| echo: false
+# make it a histogram  of horsepower (hp) coloured by number of cylinders (cyl)
+ggplot(data = mtcars,
+  aes(x = hp, fill = as.character(cyl))) +
+  geom_histogram(binwidth = 20, colour = "black") +
+  labs(title = "Histogram of horsepower (hp) by number of cylinders",
+       x = "Horsepower (hp)",
+       y = "Count",
+       fill = "Number of cylinders")
+```
+
+Remember that the `fill` aesthetic is used to control the colours of the bars, and that we need to convert the `cyl` variable to a character variable using `as.character()` so that it is treated as categorical. The `binwidth` argument in the `geom_histogram()` function controls the width of the bins in the histogram, and we set it to 20 to create 20 bins as specified in the question.
+:::
+
+5. Assign the plots you created in question 4 to variables, use the patchwork package to combine them into a single figure (stacked on top of each other and labelled with A and B), and save it to a file.
+
+::: sol
+Here is some well-commented code that does this:
+```{r}
+#| eval: false
+# first make the plots and assign to variables
+# plot A: scatterplot
+mpg_wt_scatterplot <- ggplot(data = mtcars,
+  aes(x = mpg, y = wt)) +
+  geom_point(aes(size = hp), colour = "blue", alpha = 0.5) +
+  labs(title = "The relationship between miles per gallon (mpg), weight (wt) and horsepower (hp) \nfor different numbers of cylinders",
+       x = "Miles per gallon (mpg)",
+       y = "Weight (wt)",
+       size = "Horsepower (hp)") +
+  facet_wrap(~ cyl) +
+  theme(legend.position = "bottom")
+
+# plot B: histogram
+hp_histogram <- ggplot(data = mtcars,
+  aes(x = hp, fill = as.character(cyl))) +
+  geom_histogram(binwidth = 20, colour = "black") +
+  labs(title = "Histogram of horsepower (hp) by number of cylinders",
+       x = "Horsepower (hp)",
+       y = "Count",
+       fill = "Number of cylinders")
+
+# now combine the plots using patchwork
+# use the / operator to stack them on top of each other
+combined_plot <- mpg_wt_scatterplot / hp_histogram +
+  # add labels to the plots
+  plot_annotation(tag_levels = "A")
+
+# check the combined plot to make sure it looks ok
+combined_plot
+
+# save the combined plot to a file
+ggsave("combined_plot.png", plot = combined_plot, width = 8, height = 10)
+```
+
+:::

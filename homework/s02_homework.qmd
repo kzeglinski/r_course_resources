@@ -1,0 +1,206 @@
+---
+title: Session 2 Homework
+format:
+  html:
+    self-contained: true
+    theme: litera_edited.scss
+    highlight-style: textmate.theme
+filters:
+  - assign
+---
+
+```{r}
+#| include: false
+# Load the necessary libraries
+library(tidyverse)
+```
+
+Try these homework questions to revise the content of session 2.
+
+1.  What would be the result of evaluating the following in R?
+    a.  `(2 + 4) %>% sqrt()`
+    b.  `c(1, 2, 4) %>% mean() %>% round(2)`
+    c.  `iris %>% filter(Species == "setosa")`
+    d.  `iris %>% select(Sepal.Length, Sepal.Width)`
+    e.  `iris %>% pull(Sepal.Length)`
+    f.  `iris %>% summarise(av_sepal_length = mean(Sepal.Length), .by = Species)`
+    g.  `mousezempic_dosage_data %>% na.omit()`
+    h.  `sum(c(1, 2, 3, NA))`
+    i.  `mousezempic_dosage_data %>% replace_na(list(sex = "unknown"))`
+    j.  `iris %>% arrange(Sepal.Length) %>% head(2)`
+    k.  `iris %>% mutate(species_caps = toupper(Species))`
+
+::: direction
+
+<details><summary>Hint</summary>
+You can try these in RStudio to check your answers!
+</details>
+
+:::
+
+::: sol
+1.  .
+    a.  2.44949 (the square root of 6)
+    b.  2.33 (the mean of 1, 2, and 3 is 2, and rounding to 2 decimal places gives 2). Note that the pipe is passing the result of the `mean()` function to the `round()` function's first argument, so the `2` in `round(2)` is actually the second argument to `round()`, the digits (decimal places) to round to.
+    c.  A subset of the `iris` dataset: only the rows where the `Species` column is equal to `"setosa"`
+    d.  A **data frame** subset of the `iris` dataset: only the `Sepal.Length` and `Sepal.Width` columns
+    e.  A **vector** of the `Sepal.Length` column from the `iris` dataset
+    f.  A data frame with one row and two columns: `av_sepal_length` (the mean of `Sepal.Length` for each species) and `Species` (the name of the species)
+    g.  A data frame with any rows containing missing values removed
+    h.  `NA` because NA are contagious and we didn't use the `na.rm = TRUE` argument in the `sum()` function
+    i.  A data frame with any missing values in the `sex` column replaced with `"unknown"`
+    j.  A data frame with two rows of the `iris` dataset that have the smallest `Sepal.Length`. Remember because we didn't use the `desc()` function, the default is to sort in ascending order (smallest to biggest)
+    k.  The `iris` data frame with a new column `species_caps` that contains the species name in uppercase
+:::
+
+2.  I've written the following code in R. What would be the output? Explain in words what the code is doing.
+
+```{r}
+#| eval: false
+# load the mtcars dataset
+data(mtcars)
+
+mtcars %>%
+  filter(mpg > 20) %>%
+  select(mpg, hp) %>%
+  arrange(hp) %>%
+  head(3)
+```
+
+::: sol
+The output of the code would be:
+```
+                mpg hp
+Honda Civic    30.4 52
+Merc 240D      24.4 62
+Toyota Corolla 33.9 65
+```
+
+A data frame with two columns (`mpg` and `hp`) and three rows. The rows are the first three rows of the `mtcars` dataset where the `mpg` column is greater than 20, sorted by the `hp` column in ascending order.
+
+:::
+
+3.  I'm trying to run the following code in R, but I got an error. Why? There might be more than one error.
+
+```{r}
+#| eval: false
+mtcars %>%
+  filter(cyl = 6) %>%
+  select(mpg cyl) %>%
+  summarise(count = n(), mean_mpg = mean(mpg))
+```
+
+::: sol
+There are two errors in the code:
+1.  The `filter()` function should use `==` to check for equality, not `=`.
+2.  In the `select()` function, the column names should be separated by commas.
+
+Here's the corrected code:
+```{r}
+mtcars %>%
+  filter(cyl == 6) %>%
+  select(mpg, cyl) %>%
+  summarise(count = n(), mean_mpg = mean(mpg))
+```
+It produces a data frame that shows the number of rows where `cyl` (number of cylinders in the car) is equal to 6 and the mean `mpg` (petrol efficiency in miles per gallon) for those rows.
+
+:::
+
+4.  Load the `airquality` data into your R environment using the `data()` function. Use the various dplyr functions to answer the following questions:
+    a.  How many days was the temperature above 70 degrees?
+    b.  Add a new column to the `airquality` dataset that contains the temperature in Celsius (to convert F to C, subtract 32 and then divide by 5/9).
+    c.  What was the average wind speed in May?
+    d.  What was the maximum recorded ozone level?
+
+::: sol
+a\. There were 120 days where the temperature was above 70. Here are some examples of code that would calculate this:
+
+```{r}
+# using the nrow() function to find the number of rows
+airquality %>% filter(Temp > 70) %>% nrow()
+
+# using the summarise() function with count = n() to count the number of rows
+airquality %>% filter(Temp > 70) %>% summarise(count = n())
+```
+
+b\. You can add this new column to the `airquality` dataset using the `mutate()` function:
+
+```{r}
+airquality <- airquality %>%
+  mutate(temp_c = (Temp - 32) / (5/9))
+```
+
+Note that to permanently add the `temp_c` column to the `airquality` dataset we need to assign it. Otherwise, the new column will appear in the output of the `mutate()` function in the console, but won't actually be saved.
+
+
+c\. The average wind speed in May was 11.62258. Here's how you can calculate it:
+
+Remember that the `Month` column in the `airquality` dataset represents the month number, so May is represented by `5`. We first need to filter the data to only include rows where the month is `5`, and then calculate the mean wind speed (there are a couple of ways to do this):
+
+```{r}
+# using pull() to get the wind column as a vector and then using the mean() function
+airquality %>% filter(Month == 5) %>% pull(Wind) %>% mean()
+
+# using the summarise() function to calculate the mean wind speed
+airquality %>% filter(Month == 5) %>% summarise(mean_wind_speed = mean(Wind))
+```
+
+d\. The maximum recorded ozone level was 168. There are a few ways to calculate this:
+
+```{r}
+# using the summarise() function with max() to find the maximum value
+airquality %>% summarise(max_ozone = max(Ozone))
+
+# using the pull() function to get the Ozone column as a vector and then using the max() function
+# don't forget to remove NA values with na.rm = TRUE
+airquality %>% pull(Ozone) %>% max(na.rm = T)
+
+# using the arrange() function to sort the data by Ozone in descending order and then using head() to get the first row
+airquality %>% arrange(desc(Ozone)) %>% head(1)
+
+# using the slice_max() function to get the row with the maximum Ozone value
+airquality %>% slice_max(Ozone, n = 1)
+
+```
+
+:::
+
+5.  Challenge: Using the `airquality` dataset from Q4, calculate the average wind speed for each week (assume that the first week starts on day 1, the second week starts on day 8, etc.).
+
+::: direction
+
+<details><summary>Hint</summary>
+
+Let's work backwards to help us this about the steps we need to take. Ultimately, we want to use the `summarise()` function to somehow group the data by week number and calculate the average wind speed for each week. To do this, we need to first create a new column in the `airquality` dataset that contains the week number for each day.
+
+How can we calculate the week number for each day? We know that the first week starts on day 1, the second week starts on day 8, and so on. So, if we have a column containing the day number, we can divide the it by 7 and round down to get the week number (adding 1 if we want the first week to be week 1 not week 0, but that's just a personal preference). However, the `airquality` dataset doesn't have a column with the day number (just the `Day` column which is the date in the month). Instead, we can use the row number (accessed with the `row_number()` function) as a proxy for the day number.
+</details>
+
+:::
+
+::: sol
+Sometimes, the best way to approach a complex problem like this is to think backwards: we want the average wind speed for each week, so we will need to do a grouped summarise operation. To do this, we need to first create a new column in the `airquality` dataset that contains the week number for each day. We can use the `row_number()` function (which gives each row in the data a number, starting from 1) to create a proxy for the day number, and then divide this by 7 and add 1 to get the week number. Note that we add 1 to the week number since days 0-7 are part of week 1, not week 0 (and 1/7 rounded to the nearest whole number is 0).
+
+Here is the code:
+
+```{r}
+airquality %>%
+  # get the day number (starting from 1)
+  mutate(day_number = row_number()) %>%
+  # get the week number by dividing the day number by 7 and rounding down
+  # note that to round down in R we can use the floor() function
+  mutate(week_number = floor(day_number / 7) + 1) %>%
+  # summarise the data by week number and calculate the mean wind speed
+  summarise(mean_wind_speed = mean(Wind), .by = week_number)
+```
+
+Don't worry if this is a bit complex - it's a challenging problem! The key is to break it down into smaller steps and think about how you can use the functions you've learned to solve the problem. It takes a bit of practice but eventually you'll get used to thinking in this way.
+
+:::
+
+::: direction
+
+If you have any questions, post them on the teams group. If you'd like more practice, try out the [practice questions in the course ebook](https://kzeglinski.github.io/new_wehi_r_course/session_2.html#practice-questions).
+
+
+:::
